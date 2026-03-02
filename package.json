@@ -1,0 +1,25 @@
+{
+  "name": "kk-website",
+  "version": "1.0.0",
+  "description": "kk哥的个人主页 - Dota2游廊开发工程师",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "dota2",
+    "游廊",
+    "typescript",
+    "x-template",
+    "个人主页"
+  ],
+  "author": "kk哥",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.2.1",
+    "sqlite3": "^5.1.7"
+  }
+}

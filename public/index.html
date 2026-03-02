@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kk哥的博客 - 我的损友们</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #0a0a0a;
+            --white: #ffffff;
+            --gray: #888888;
+            --light-gray: #f5f5f5;
+            --border: #e0e0e0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--white);
+            color: var(--black);
+            line-height: 1.8;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 左中右布局容器 */
+        .layout-container {
+            display: flex;
+            min-height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 左侧边栏 */
+        .sidebar-left {
+            width: 280px;
+            background: var(--light-gray);
+            border-right: 1px solid var(--border);
+            padding: 30px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        /* 中间内容区域 */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 40px 30px;
+            max-width: 800px;
+        }
+
+        /* 右侧边栏 */
+        .sidebar-right {
+            width: 280px;
+            background: var(--light-gray);
+            border-left: 1px solid var(--border);
+            padding: 30px 20px;
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        /* 左侧边栏 - 个人信息 */
+        .profile-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--black);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            font-weight: 600;
+            margin: 0 auto 15px;
+            transition: all 0.3s ease;
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .profile-name {
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--black);
+        }
+
+        .profile-tagline {
+            font-size: 0.9em;
+            color: var(--gray);
+            font-style: italic;
+        }
+
+        /* 左侧导航栏 */
+        .sidebar-nav {
+            margin-top: 20px;
+        }
+
+        .sidebar-nav h3 {
+            font-size: 0.85em;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--black);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--black);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-item:hover {
+            background: var(--black);
+            color: var(--white);
+            transform: translateX(5px);
+        }
+
+        .nav-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .nav-item.active {
+            background: var(--black);
+            color: var(--white);
+            transform: translateX(5px);
+        }
+
+        .nav-item.active::before {
+            transform: scaleY(1);
+        }
+
+        /* 博客头部 */
+        .blog-header {
+            text-align: center;
+            padding: 60px 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .blog-header h1 {
+            font-size: 2.5em;
+            font-weight: 600;
+            letter-spacing: -1px;
+            margin-bottom: 10px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .blog-header .subtitle {
+            font-size: 1.1em;
+            color: var(--gray);
+            font-weight: 400;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+        }
+
+        .blog-header .meta {
+            font-size: 0.9em;
+            color: var(--gray);
+            margin-top: 15px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease 0.4s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 博客文章样式 */
+        .blog-post {
+            margin-bottom: 50px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease 0.6s forwards;
+        }
+
+        .post-title {
+            font-size: 1.8em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            line-height: 1.3;
+            position: relative;
+            padding-left: 20px;
+            border-left: 4px solid var(--black);
+            transition: all 0.3s ease;
+        }
+
+        .post-title:hover {
+            border-left-color: var(--gray);
+            transform: translateX(5px);
+        }
+
+        .post-meta {
+            font-size: 0.9em;
+            color: var(--gray);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .post-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .post-content {
+            font-size: 1.05em;
+            line-height: 1.8;
+            color: var(--black);
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+        }
+
+        .post-content .highlight {
+            background: #ffffcc;
+            padding: 2px 5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .post-content .highlight:hover {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        /* 文章卡片 */
+        .post-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .post-card:nth-child(2) { animation-delay: 0.8s; }
+        .post-card:nth-child(3) { animation-delay: 1s; }
+        .post-card:nth-child(4) { animation-delay: 1.2s; }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            border-color: var(--black);
+        }
+
+        .post-card h2 {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--black);
+        }
+
+        .post-card .date {
+            font-size: 0.85em;
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+
+        .post-card .excerpt {
+            color: var(--gray);
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+
+        .post-card .read-more {
+            color: var(--black);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .post-card .read-more:hover {
+            gap: 10px;
+            color: var(--gray);
+        }
+
+        /* 损友卡片 - 博客风格 */
+        .friend-post {
+            background: var(--light-gray);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--black);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .friend-post:nth-child(2) { animation-delay: 0.8s; }
+
+        .friend-post:hover {
+            transform: translateX(10px);
+            box-shadow: -5px 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .friend-post h3 {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .friend-post .nickname {
+            font-size: 0.9em;
+            color: var(--gray);
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .friend-post .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .tag {
+            background: var(--black);
+            color: var(--white);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tag:hover {
+            transform: scale(1.1);
+            background: var(--white);
+            color: var(--black);
+            border: 1px solid var(--black);
+        }
+
+        .friend-post p {
+            color: var(--gray);
+            line-height: 1.7;
+            margin: 10px 0;
+        }
+
+        /* 故事列表 */
+        .story-list {
+            margin-top: 20px;
+        }
+
+        .story-item {
+            background: var(--white);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 3px solid var(--black);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .story-item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .story-item h4 {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--black);
+        }
+
+        .story-item p {
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        .story-item .laugh {
+            font-size: 1.3em;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            opacity: 0.3;
+            transition: all 0.3s ease;
+        }
+
+        .story-item:hover .laugh {
+            opacity: 0.8;
+            transform: rotate(10deg);
+        }
+
+        /* 损友语录 - 引用样式 */
+        .roast-section {
+            background: var(--light-gray);
+            padding: 40px;
+            margin: 40px 0;
+            border-radius: 10px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease 1.4s forwards;
+        }
+
+        .roast-section h2 {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: center;
+            color: var(--black);
+        }
+
+        .roast-quote {
+            background: var(--white);
+            padding: 25px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--black);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .roast-quote:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .roast-quote .speaker {
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .roast-quote .quote {
+            color: var(--gray);
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        /* 关系状态 - 列表样式 */
+        .relationship-list {
+            margin-top: 20px;
+        }
+
+        .relationship-item {
+            background: var(--white);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--black);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .relationship-item:nth-child(1) { animation-delay: 0.6s; }
+        .relationship-item:nth-child(2) { animation-delay: 0.8s; }
+        .relationship-item:nth-child(3) { animation-delay: 1s; }
+        .relationship-item:nth-child(4) { animation-delay: 1.2s; }
+
+        .relationship-item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .relationship-item h3 {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--black);
+        }
+
+        .relationship-item p {
+            color: var(--gray);
+            font-size: 0.95em;
+        }
+
+        /* 对比区域 - 表格样式 */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease 1.6s forwards;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comparison-table th {
+            background: var(--light-gray);
+            font-weight: 600;
+            color: var(--black);
+        }
+
+        .comparison-table tr:hover {
+            background: var(--light-gray);
+        }
+
+        .comparison-table td {
+            color: var(--gray);
+        }
+
+        .comparison-table .score {
+            font-weight: 600;
+            font-size: 1.2em;
+            color: var(--black);
+        }
+
+        /* 互动区域 */
+        .interactive {
+            text-align: center;
+            padding: 40px 20px;
+            margin: 40px 0;
+            background: var(--light-gray);
+            border-radius: 10px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease 1.8s forwards;
+        }
+
+        .interactive h2 {
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--black);
+        }
+
+        .interactive p {
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+
+        .interactive button {
+            background: var(--black);
+            color: var(--white);
+            border: none;
+            padding: 12px 30px;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            margin: 5px;
+            border-radius: 5px;
+        }
+
+        .interactive button:hover {
+            background: var(--white);
+            color: var(--black);
+            border: 1px solid var(--black);
+            transform: translateY(-2px);
+        }
+
+        /* 博客导航 */
+        .blog-nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: var(--light-gray);
+            border-radius: 10px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease 0.8s forwards;
+        }
+
+        .blog-nav a {
+            color: var(--black);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .blog-nav a:hover {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        /* 底部 */
+        .blog-footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--border);
+            margin-top: 60px;
+            color: var(--gray);
+            font-size: 0.9em;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease 2s forwards;
+        }
+
+        .blog-footer .tagline {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            color: var(--black);
+            font-weight: 600;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .blog-header h1 {
+                font-size: 2em;
+            }
+
+            .post-title {
+                font-size: 1.5em;
+            }
+
+            .post-card h2 {
+                font-size: 1.3em;
+            }
+
+            .comparison-table {
+                font-size: 0.9em;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 10px;
+            }
+
+            .blog-nav {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
+
+        /* 特殊效果 */
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* 加载动画 */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--black);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loader-text {
+            font-size: 1em;
+            color: var(--gray);
+        }
+
+        /* 文章分隔线 */
+        .post-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 50px 0;
+            opacity: 0;
+            transform: scaleX(0);
+            animation: expandLine 0.8s ease forwards;
+        }
+
+        @keyframes expandLine {
+            to {
+                transform: scaleX(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <div class="loader-text">正在加载kk哥的博客...</div>
+        </div>
+    </div>
+
+    <!-- 左中右布局容器 -->
+    <div class="layout-container">
+        <!-- 左侧边栏 -->
+        <aside class="sidebar-left">
+            <!-- 个人信息 -->
+            <div class="profile-section">
+                <div class="profile-avatar">KK</div>
+                <div class="profile-name">kk哥</div>
+                <div class="profile-tagline">爱咋咋地老子最吊</div>
+            </div>
+
+            <!-- 导航栏 -->
+            <nav class="sidebar-nav">
+                <h3>导航</h3>
+                <a href="#" class="nav-item" onclick="showGuestbook(); return false;">留言板</a>
+                <a href="#" class="nav-item" onclick="showAbout(); return false;">关于我</a>
+                <a href="#" class="nav-item" onclick="showFriends(); return false;">好友专属</a>
+            </nav>
+        </aside>
+
+        <!-- 中间内容区域 -->
+        <main class="main-content">
+            <!-- 博客头部 -->
+            <header class="blog-header">
+                <h1>kk哥的博客</h1>
+                <div class="subtitle">记录生活 · 分享故事 · 展现真实的自己</div>
+                <div class="meta">2026年 · 损友圈特辑</div>
+            </header>
+
+        <!-- 关于我板块 -->
+        <div id="about-section" style="display: block;">
+            <!-- 文章：关于我 -->
+            <article class="post-card" id="about">
+                <h2>关于我</h2>
+                <div class="date">2026-03-01 · 个人简介</div>
+                <div class="post-content">
+                    <p>我是<span class="highlight">kk哥</span>，一个<span class="highlight">Dota2游廊开发工程师</span>。</p>
+                </div>
+            </article>
+
+            <!-- 文章：兴趣爱好 -->
+            <article class="post-card">
+                <h2>我的兴趣爱好</h2>
+                <div class="date">2026-03-01 · 生活记录</div>
+                <div class="post-content">
+                    <p>我是一个<span class="highlight">苦逼牛马</span>。</p>
+                </div>
+            </article>
+        </div>
+
+        <!-- 文章：损友故事（已隐藏） -->
+        <!-- <article class="post-card" id="friends">
+            <h2>我的损友们</h2>
+            <div class="date">2026-03-01 · 损友圈特辑</div>
+            <div class="post-content">
+                <p>我有两位<span class="highlight">损友</span>，他们是我生活中不可或缺的一部分。</p>
+            </div>
+
+            <div class="friend-post">
+                <h3>莫总</h3>
+                <div class="nickname">外号：人生导师（装逼版）</div>
+                <div class="tags">
+                    <span class="tag">高高瘦瘦帅帅</span>
+                    <span class="tag">严肃搞笑</span>
+                    <span class="tag">千万级操盘手</span>
+                    <span class="tag">13年老友</span>
+                </div>
+                <p>认识<span class="highlight">13年</span>的发小，表面上是<span class="highlight">千万级别抖音商家账号操盘手</span>，实际上是个<span class="highlight">严肃的搞笑担当</span>。</p>
+                <p>长得<span class="highlight">高高瘦瘦帅帅的</span>，但一开口就暴露了<span class="highlight">闷骚的本质</span>。总是一副<span class="highlight">"我懂人生"</span>的样子，其实内心戏超多。</p>
+                
+                <div class="story-list">
+                    <div class="story-item">
+                        <span class="laugh">😂</span>
+                        <h4>年度最佳笑料：叫我妈叫姐</h4>
+                        <p>今年过年他来我家做客，我妈跟他唠家常时，<span class="highlight">我妈发现</span>他居然要叫我妈叫<span class="highlight">"姐"</span>！更搞笑的是，连莫总自己都不相信，我当时就<span class="highlight">很难绷</span>，这辈分乱得我都想叫他<span class="highlight">"叔"</span>了。</p>
+                    </div>
+                    <div class="story-item">
+                        <span class="laugh">🤣</span>
+                        <h4>人生导师的日常</h4>
+                        <p>平时总是一副<span class="highlight">"我懂人生"</span>的样子，结果过年连辈分都搞不清楚。这就是<span class="highlight">千万级操盘手</span>的<span class="highlight">真实水平</span>？</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="friend-post">
+                <h3>啊猪（死人猪）</h3>
+                <div class="nickname">外号：死人猪（原名：小猪）</div>
+                <div class="tags">
+                    <span class="tag">秃顶稀疏</span>
+                    <span class="tag">闷骚怪</span>
+                    <span class="tag">倒霉鬼</span>
+                    <span class="tag">唱歌比我差</span>
+                </div>
+                <p>姓朱，刚认识时叫他<span class="highlight">"小猪"</span>，熟了就升级为<span class="highlight">"死人猪"</span>。一个<span class="highlight">稀疏的瘦子</span>，头顶<span class="highlight">"地中海"风格</span>。</p>
+                <p>性格是<span class="highlight">闷骚怪</span>，平时不说话，一说话就<span class="highlight">语出惊人</span>。更惨的是，他是个<span class="highlight">倒霉鬼</span>，每次跟他出门就没有好事情发生。</p>
+                
+                <div class="story-list">
+                    <div class="story-item">
+                        <span class="laugh">😅</span>
+                        <h4>唱歌水平鉴定</h4>
+                        <p>唱歌确实<span class="highlight">好听</span>，但比我差多了。每次KTV我都是<span class="highlight">麦霸</span>，他只能在旁边<span class="highlight">默默伴唱</span>。</p>
+                    </div>
+                    <div class="story-item">
+                        <span class="laugh">🤣</span>
+                        <h4>倒霉鬼的日常</h4>
+                        <p>每次跟他出门，不是<span class="highlight">丢东西</span>就是<span class="highlight">遇倒霉事</span>。我怀疑他是不是<span class="highlight">水逆体质</span>，建议他<span class="highlight">天天看黄历</span>。</p>
+                    </div>
+                    <div class="story-item">
+                        <span class="laugh">😂</span>
+                        <h4>见面频率</h4>
+                        <p>一年难见一面，每次见面都像是<span class="highlight">"久别重逢"</span>。不过虽然见面少，但<span class="highlight">损友</span>的<span class="highlight">感情</span>还在。</p>
+                    </div>
+                </div>
+            </div>
+        </article> -->
+
+        <!-- 分隔线 -->
+        <div class="post-divider"></div>
+
+        <!-- 文章：损友语录（已隐藏） -->
+        <!-- <article class="post-card" id="quotes">
+            <h2>损友语录</h2>
+            <div class="date">2026-03-01 · 经典语录</div>
+            <div class="roast-section">
+                <div class="roast-quote" onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='',300)">
+                    <div class="speaker">莫总</div>
+                    <div class="quote">"我今年25岁，应该叫你妈叫姐"</div>
+                </div>
+                <div class="roast-quote" onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='',300)">
+                    <div class="speaker">啊猪</div>
+                    <div class="quote">"我今天又倒霉了，出门踩狗屎"</div>
+                </div>
+                <div class="roast-quote" onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='',300)">
+                    <div class="speaker">kk哥</div>
+                    <div class="quote">"你们两个，一个装逼，一个倒霉"</div>
+                </div>
+                <div class="roast-quote" onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='',300)">
+                    <div class="speaker">kk哥</div>
+                    <div class="quote">"莫总，你还是叫我妈叫阿姨吧"</div>
+                </div>
+            </div>
+        </article> -->
+
+        <!-- 分隔线 -->
+        <div class="post-divider"></div>
+
+        <!-- 文章：关系状态（已隐藏） -->
+        <!-- <article class="post-card" id="relationship">
+            <h2>关系状态</h2>
+            <div class="date">2026-03-01 · 人际关系</div>
+            <div class="relationship-list">
+                <div class="relationship-item" onclick="this.style.transform='translateX(10px)'; setTimeout(()=>this.style.transform='',300)">
+                    <h3>🤝 莫总</h3>
+                    <p>13年老友，人生导师（自称）</p>
+                </div>
+                <div class="relationship-item" onclick="this.style.transform='translateX(10px)'; setTimeout(()=>this.style.transform='',300)">
+                    <h3>🐷 啊猪</h3>
+                    <p>一年难见一面的损友</p>
+                </div>
+                <div class="relationship-item" onclick="this.style.transform='translateX(10px)'; setTimeout(()=>this.style.transform='',300)">
+                    <h3>🎤 共同爱好</h3>
+                    <p>唱歌（虽然水平不同）</p>
+                </div>
+                <div class="relationship-item" onclick="this.style.transform='translateX(10px)'; setTimeout(()=>this.style.transform='',300)">
+                    <h3>😂 损友程度</h3>
+                    <p>互相伤害，越损越亲</p>
+                </div>
+            </div>
+        </article> -->
+
+        <!-- 分隔线 -->
+        <div class="post-divider"></div>
+
+        <!-- 文章：损友对比（已隐藏） -->
+        <!-- <article class="post-card">
+            <h2>损友对比</h2>
+            <div class="date">2026-03-01 · 趣味对比</div>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>损友</th>
+                        <th>总分</th>
+                        <th>特点</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr onclick="this.style.background='var(--light-gray)'; setTimeout(()=>this.style.background='',300)">
+                        <td>莫总</td>
+                        <td class="score">8/10</td>
+                        <td>装逼⭐⭐⭐⭐⭐ 搞笑⭐⭐⭐⭐ 靠谱⭐⭐⭐⭐⭐</td>
+                    </tr>
+                    <tr onclick="this.style.background='var(--light-gray)'; setTimeout(()=>this.style.background='',300)">
+                        <td>啊猪</td>
+                        <td class="score">6/10</td>
+                        <td>倒霉⭐⭐⭐⭐⭐ 闷骚⭐⭐⭐⭐⭐ 唱歌⭐⭐⭐</td>
+                    </tr>
+                </tbody>
+            </table>
+        </article> -->
+
+        <!-- 损友内容显示按钮 -->
+        <section class="interactive">
+            <h2>想看损友内容吗？</h2>
+            <p>输入对应的外号名字，解锁损友内容！</p>
+            <div style="margin: 20px 0;">
+                <input type="text" id="friendInput" placeholder="输入外号解锁内容" 
+                       style="padding: 12px 20px; font-size: 1em; border: 2px solid var(--border); border-radius: 5px; width: 250px; margin-right: 10px;">
+                <button onclick="unlockFriend()">解锁内容</button>
+            </div>
+            <div id="friendMessage" style="margin-top: 15px; color: var(--gray);"></div>
+        </section>
+
+        <!-- 好友专属板块 -->
+        <div id="friends-section" style="display: none;">
+            <!-- 损友内容显示区域 -->
+            <div id="friendContent">
+                <!-- 损友故事 -->
+                <article class="post-card" id="friends">
+                    <h2>我的损友们</h2>
+                    <div class="date">2026-03-01 · 损友圈特辑</div>
+                    <div class="post-content">
+                        <p>我有两位<span class="highlight">损友</span>，他们是我生活中不可或缺的一部分。</p>
+                    </div>
+
+                    <!-- 莫总 -->
+                    <div class="friend-post" id="mo-content" style="display: block;">
+                        <h3>莫总</h3>
+                        <div class="nickname">外号：人生导师（装逼版）</div>
+                        <div class="tags">
+                            <span class="tag">高高瘦瘦帅帅</span>
+                            <span class="tag">严肃搞笑</span>
+                            <span class="tag">千万级操盘手</span>
+                            <span class="tag">13年老友</span>
+                        </div>
+                        <p>认识<span class="highlight">13年</span>的发小，表面上是<span class="highlight">千万级别抖音商家账号操盘手</span>，实际上是个<span class="highlight">严肃的搞笑担当</span>。</p>
+                        <p>长得<span class="highlight">高高瘦瘦帅帅的</span>，但一开口就暴露了<span class="highlight">闷骚的本质</span>。总是一副<span class="highlight">"我懂人生"</span>的样子，其实内心戏超多。</p>
+                        
+                        <div class="story-list">
+                            <div class="story-item">
+                                <span class="laugh">😂</span>
+                                <h4>年度最佳笑料：叫我妈叫姐</h4>
+                                <p>今年过年他来我家做客，我妈跟他唠家常时，<span class="highlight">我妈发现</span>他居然要叫我妈叫<span class="highlight">"姐"</span>！更搞笑的是，连莫总自己都不相信，我当时就<span class="highlight">很难绷</span>，这辈分乱得我都想叫他<span class="highlight">"叔"</span>了。</p>
+                            </div>
+                            <div class="story-item">
+                                <span class="laugh">🤣</span>
+                                <h4>人生导师的日常</h4>
+                                <p>平时总是一副<span class="highlight">"我懂人生"</span>的样子，结果过年连辈分都搞不清楚。这就是<span class="highlight">千万级操盘手</span>的<span class="highlight">真实水平</span>？</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 啊猪 -->
+                    <div class="friend-post" id="zhu-content" style="display: block;">
+                        <h3>啊猪（死人猪）</h3>
+                        <div class="nickname">外号：死人猪（原名：小猪）</div>
+                        <div class="tags">
+                            <span class="tag">秃顶稀疏</span>
+                            <span class="tag">闷骚怪</span>
+                            <span class="tag">倒霉鬼</span>
+                            <span class="tag">唱歌比我差</span>
+                        </div>
+                        <p>姓朱，刚认识时叫他<span class="highlight">"小猪"</span>，熟了就升级为<span class="highlight">"死人猪"</span>。一个<span class="highlight">稀疏的瘦子</span>，头顶<span class="highlight">"地中海"风格</span>。</p>
+                        <p>性格是<span class="highlight">闷骚怪</span>，平时不说话，一说话就<span class="highlight">语出惊人</span>。更惨的是，他是个<span class="highlight">倒霉鬼</span>，每次跟他出门就没有好事情发生。</p>
+                        
+                        <div class="story-list">
+                            <div class="story-item">
+                                <span class="laugh">😅</span>
+                                <h4>唱歌水平鉴定</h4>
+                                <p>唱歌确实<span class="highlight">好听</span>，但比我差多了。每次KTV我都是<span class="highlight">麦霸</span>，他只能在旁边<span class="highlight">默默伴唱</span>。</p>
+                            </div>
+                            <div class="story-item">
+                                <span class="laugh">🤣</span>
+                                <h4>倒霉鬼的日常</h4>
+                                <p>每次跟他出门，不是<span class="highlight">丢东西</span>就是<span class="highlight">遇倒霉事</span>。我怀疑他是不是<span class="highlight">水逆体质</span>，建议他<span class="highlight">天天看黄历</span>。</p>
+                            </div>
+                            <div class="story-item">
+                                <span class="laugh">😂</span>
+                                <h4>见面频率</h4>
+                                <p>一年难见一面，每次见面都像是<span class="highlight">"久别重逢"</span>。不过虽然见面少，但<span class="highlight">损友</span>的<span class="highlight">感情</span>还在。</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 损友语录 -->
+                <article class="post-card" id="quotes">
+                    <h2>损友语录</h2>
+                    <div class="date">2026-03-01 · 经典语录</div>
+                    <div class="roast-section">
+                        <div class="roast-quote" onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='',300)">
+                            <div class="speaker">莫总</div>
+                            <div class="quote">"我今年25岁，应该叫你妈叫姐"</div>
+                        </div>
+                        <div class="roast-quote" onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='',300)">
+                            <div class="speaker">啊猪</div>
+                            <div class="quote">"我今天又倒霉了，出门踩狗屎"</div>
+                        </div>
+                        <div class="roast-quote" onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='',300)">
+                            <div class="speaker">kk哥</div>
+                            <div class="quote">"你们两个，一个装逼，一个倒霉"</div>
+                        </div>
+                        <div class="roast-quote" onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='',300)">
+                            <div class="speaker">kk哥</div>
+                            <div class="quote">"莫总，你还是叫我妈叫阿姨吧"</div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 关系状态 -->
+                <article class="post-card" id="relationship">
+                    <h2>关系状态</h2>
+                    <div class="date">2026-03-01 · 人际关系</div>
+                    <div class="relationship-list">
+                        <div class="relationship-item" onclick="this.style.transform='translateX(10px)'; setTimeout(()=>this.style.transform='',300)">
+                            <h3>🤝 莫总</h3>
+                            <p>13年老友，人生导师（自称）</p>
+                        </div>
+                        <div class="relationship-item" onclick="this.style.transform='translateX(10px)'; setTimeout(()=>this.style.transform='',300)">
+                            <h3>🐷 啊猪</h3>
+                            <p>一年难见一面的损友</p>
+                        </div>
+                        <div class="relationship-item" onclick="this.style.transform='translateX(10px)'; setTimeout(()=>this.style.transform='',300)">
+                            <h3>🎤 共同爱好</h3>
+                            <p>唱歌（虽然水平不同）</p>
+                        </div>
+                        <div class="relationship-item" onclick="this.style.transform='translateX(10px)'; setTimeout(()=>this.style.transform='',300)">
+                            <h3>😂 损友程度</h3>
+                            <p>互相伤害，越损越亲</p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 损友对比 -->
+                <article class="post-card">
+                    <h2>损友对比</h2>
+                    <div class="date">2026-03-01 · 趣味对比</div>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>损友</th>
+                                <th>总分</th>
+                                <th>特点</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr onclick="this.style.background='var(--light-gray)'; setTimeout(()=>this.style.background='',300)">
+                                <td>莫总</td>
+                                <td class="score">8/10</td>
+                                <td>装逼⭐⭐⭐⭐⭐ 搞笑⭐⭐⭐⭐ 靠谱⭐⭐⭐⭐⭐</td>
+                            </tr>
+                            <tr onclick="this.style.background='var(--light-gray)'; setTimeout(()=>this.style.background='',300)">
+                                <td>啊猪</td>
+                                <td class="score">6/10</td>
+                                <td>倒霉⭐⭐⭐⭐⭐ 闷骚⭐⭐⭐⭐⭐ 唱歌⭐⭐⭐</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </article>
+
+                <!-- 互动区域 -->
+                <section class="interactive">
+                    <h2>想认识我的损友们吗？</h2>
+                    <p>点击按钮，看看你会遇到哪个"惊喜"！</p>
+                    <button onclick="showRoast('mo')">吐槽莫总</button>
+                    <button onclick="showRoast('zhu')">吐槽啊猪</button>
+                    <button onclick="showRoast('both')">一起吐槽</button>
+                </section>
+            </div>
+        </div>
+
+        <!-- 留言板块 -->
+        <div id="guestbook-section" style="display: none;">
+            <article class="post-card" id="guestbook">
+                <h2>留言板块</h2>
+                <div class="date">2026-03-01 · 访客留言</div>
+                <div class="post-content">
+                    <p>欢迎在下方留言！所有留言都会公开显示。</p>
+                </div>
+                
+                <!-- 留言表单 -->
+                <div style="margin-top: 20px; padding: 20px; background: var(--light-gray); border-radius: 10px;">
+                    <div style="margin-bottom: 15px;">
+                        <input type="text" id="guestName" placeholder="你的名字" 
+                               style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 5px; margin-bottom: 10px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <textarea id="guestMessage" placeholder="留言内容" rows="4" 
+                                  style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 5px; resize: vertical;"></textarea>
+                    </div>
+                    <button onclick="submitGuestbook()" style="padding: 12px 30px; background: var(--black); color: var(--white); border: none; border-radius: 5px; cursor: pointer; font-weight: 500;">提交留言</button>
+                </div>
+
+                <!-- 留言列表 -->
+                <div id="guestbookList" style="margin-top: 30px;">
+                    <h3 style="margin-bottom: 15px; font-weight: 600;">留言列表</h3>
+                    <div id="guestbookMessages"></div>
+                </div>
+            </article>
+        </div>
+
+        <!-- 底部 -->
+        <footer class="blog-footer">
+            <div class="tagline">爱咋咋地老子最吊</div>
+            <p>kk哥的博客 · 2026年</p>
+        </footer>
+        </main>
+
+        <!-- 右侧边栏 -->
+        <aside class="sidebar-right">
+            <div style="text-align: center; padding: 20px 0;">
+                <h3 style="color: var(--gray); font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">其他</h3>
+                <p style="color: var(--gray); font-size: 0.9em; line-height: 1.6;">
+                    这里可以放一些额外的信息，比如：
+                    <br><br>
+                    • 最新动态
+                    <br>
+                    • 联系方式
+                    <br>
+                    • 友情链接
+                    <br>
+                    • 标签云
+                </p>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        // 页面加载动画
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 1000);
+        });
+
+        // 解锁损友内容
+        function unlockFriend() {
+            const input = document.getElementById('friendInput').value.trim();
+            const message = document.getElementById('friendMessage');
+            const content = document.getElementById('friendContent');
+            const moContent = document.getElementById('mo-content');
+            const zhuContent = document.getElementById('zhu-content');
+
+            // 重置显示
+            moContent.style.display = 'none';
+            zhuContent.style.display = 'none';
+
+            if (input === '莫总') {
+                moContent.style.display = 'block';
+                content.style.display = 'block';
+                message.innerHTML = '✅ 已解锁莫总的内容！';
+                message.style.color = 'green';
+            } else if (input === '死人猪' || input === '啊猪') {
+                zhuContent.style.display = 'block';
+                content.style.display = 'block';
+                message.innerHTML = '✅ 已解锁啊猪（死人猪）的内容！';
+                message.style.color = 'green';
+            } else if (input === '全部' || input === 'all') {
+                moContent.style.display = 'block';
+                zhuContent.style.display = 'block';
+                content.style.display = 'block';
+                message.innerHTML = '✅ 已解锁全部损友内容！';
+                message.style.color = 'green';
+            } else {
+                message.innerHTML = '❌ 输入错误！请输入正确的外号';
+                message.style.color = 'red';
+                content.style.display = 'none';
+            }
+        }
+
+        // 显示留言板板块
+        function showGuestbook() {
+            // 隐藏所有板块
+            hideAllSections();
+            
+            // 显示留言板板块
+            const guestbookSection = document.getElementById('guestbook-section');
+            if (guestbookSection) {
+                guestbookSection.style.display = 'block';
+            }
+            
+            // 滚动到留言板区域
+            const guestbook = document.getElementById('guestbook');
+            if (guestbook) {
+                guestbook.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            // 更新导航栏激活状态
+            updateNavActive('guestbook');
+        }
+
+        // 显示关于我板块
+        function showAbout() {
+            // 隐藏所有板块
+            hideAllSections();
+            
+            // 显示关于我板块
+            const aboutSection = document.getElementById('about-section');
+            if (aboutSection) {
+                aboutSection.style.display = 'block';
+            }
+            
+            // 滚动到关于我区域
+            const about = document.getElementById('about');
+            if (about) {
+                about.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            // 更新导航栏激活状态
+            updateNavActive('about');
+        }
+
+        // 显示好友专属板块
+        function showFriends() {
+            // 隐藏所有板块
+            hideAllSections();
+            
+            // 显示好友专属板块
+            const friendsSection = document.getElementById('friends-section');
+            if (friendsSection) {
+                friendsSection.style.display = 'block';
+            }
+            
+            // 滚动到好友专属区域
+            const friends = document.getElementById('friends');
+            if (friends) {
+                friends.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            // 更新导航栏激活状态
+            updateNavActive('friends');
+        }
+
+        // 隐藏所有板块
+        function hideAllSections() {
+            const sections = ['about-section', 'guestbook-section', 'friends-section'];
+            sections.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    section.style.display = 'none';
+                }
+            });
+        }
+
+        // 更新导航栏激活状态
+        function updateNavActive(activeSection) {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // 根据激活的板块添加active类
+            if (activeSection === 'guestbook') {
+                navItems[0].classList.add('active');
+            } else if (activeSection === 'about') {
+                navItems[1].classList.add('active');
+            } else if (activeSection === 'friends') {
+                navItems[2].classList.add('active');
+            }
+        }
+
+        // 互动按钮
+        function showRoast(type) {
+            const roasts = {
+                mo: [
+                    "莫总，你还是叫我妈叫阿姨吧！辈分都乱了！",
+                    "千万级操盘手，连辈分都搞不清楚？",
+                    "莫总，你这人生导师的水平有待提高啊！",
+                    "13年老友，结果过年要叫我妈叫姐？"
+                ],
+                zhu: [
+                    "死人猪，你今天又踩狗屎了吗？",
+                    "秃顶不是你的错，但唱歌比我差就是你的不对了！",
+                    "啊猪，你这倒霉体质什么时候能改改？",
+                    "一年难见一面，见面就倒霉！"
+                ],
+                both: [
+                    "莫总装逼，啊猪倒霉，绝配！",
+                    "一个高高瘦瘦帅帅，一个稀疏秃顶瘦子，绝了！",
+                    "人生导师和倒霉鬼，这就是我的朋友圈！",
+                    "莫总叫我妈叫姐，啊猪出门踩狗屎，绝了！"
+                ]
+            };
+
+            const randomRoast = roasts[type][Math.floor(Math.random() * roasts[type].length)];
+            alert(randomRoast);
+            
+            // 添加抖动效果
+            document.body.classList.add('shake');
+            setTimeout(() => {
+                document.body.classList.remove('shake');
+            }, 500);
+        }
+
+        // 平滑滚动
+        document.querySelectorAll('.blog-nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 高亮文本点击效果
+        document.querySelectorAll('.highlight').forEach(highlight => {
+            highlight.addEventListener('click', function() {
+                this.style.background = 'var(--black)';
+                this.style.color = 'var(--white)';
+                setTimeout(() => {
+                    this.style.background = '#ffffcc';
+                    this.style.color = 'var(--black)';
+                }, 300);
+            });
+        });
+
+        // 标签点击效果
+        document.querySelectorAll('.tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                this.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 200);
+            });
+        });
+
+        // 留言功能 - 使用SQLite数据库
+        async function submitGuestbook() {
+            const name = document.getElementById('guestName').value.trim();
+            const message = document.getElementById('guestMessage').value.trim();
+
+            if (!name || !message) {
+                alert('请填写姓名和留言内容！');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/guestbook', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, message })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // 清空表单
+                    document.getElementById('guestName').value = '';
+                    document.getElementById('guestMessage').value = '';
+
+                    // 重新加载留言
+                    await loadGuestbook();
+
+                    // 显示成功消息
+                    alert('留言成功！感谢你的留言！');
+                } else {
+                    alert('留言失败：' + result.error);
+                }
+            } catch (error) {
+                console.error('提交留言失败:', error);
+                alert('提交留言失败，请稍后重试');
+            }
+        }
+
+        async function loadGuestbook() {
+            const container = document.getElementById('guestbookMessages');
+            container.innerHTML = '<p style="color: var(--gray);">正在加载留言...</p>';
+
+            try {
+                const response = await fetch('/api/guestbook');
+                const data = await response.json();
+
+                if (data.messages && data.messages.length > 0) {
+                    let html = '';
+                    data.messages.forEach((entry) => {
+                        html += `
+                            <div style="background: var(--white); padding: 20px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid var(--black); transition: all 0.3s ease;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                    <strong style="color: var(--black);">${escapeHtml(entry.name)}</strong>
+                                    <span style="color: var(--gray); font-size: 0.85em;">${entry.timestamp}</span>
+                                </div>
+                                <p style="color: var(--gray); line-height: 1.6;">${escapeHtml(entry.message)}</p>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<p style="color: var(--gray);">暂无留言</p>';
+                }
+            } catch (error) {
+                console.error('加载留言失败:', error);
+                container.innerHTML = '<p style="color: red;">加载留言失败</p>';
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 页面加载时初始化
+        window.addEventListener('load', function() {
+            // 默认显示关于我板块
+            showAbout();
+            
+            // 加载留言
+            loadGuestbook();
+        });
+    </script>
+</body>
+</html>
