@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kk哥的博客 - 我的损友们</title>
+    <title>kk哥的博客</title>
     <style>
         * {
             margin: 0;
@@ -97,7 +98,7 @@
 
         .profile-avatar:hover {
             transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
         }
 
         .profile-name {
@@ -293,13 +294,21 @@
             animation: fadeInUp 0.8s ease forwards;
         }
 
-        .post-card:nth-child(2) { animation-delay: 0.8s; }
-        .post-card:nth-child(3) { animation-delay: 1s; }
-        .post-card:nth-child(4) { animation-delay: 1.2s; }
+        .post-card:nth-child(2) {
+            animation-delay: 0.8s;
+        }
+
+        .post-card:nth-child(3) {
+            animation-delay: 1s;
+        }
+
+        .post-card:nth-child(4) {
+            animation-delay: 1.2s;
+        }
 
         .post-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
             border-color: var(--black);
         }
 
@@ -350,11 +359,13 @@
             animation: fadeInUp 0.8s ease forwards;
         }
 
-        .friend-post:nth-child(2) { animation-delay: 0.8s; }
+        .friend-post:nth-child(2) {
+            animation-delay: 0.8s;
+        }
 
         .friend-post:hover {
             transform: translateX(10px);
-            box-shadow: -5px 5px 20px rgba(0,0,0,0.1);
+            box-shadow: -5px 5px 20px rgba(0, 0, 0, 0.1);
         }
 
         .friend-post h3 {
@@ -421,7 +432,7 @@
 
         .story-item:hover {
             transform: translateX(8px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .story-item h4 {
@@ -481,7 +492,7 @@
 
         .roast-quote:hover {
             transform: translateX(10px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .roast-quote .speaker {
@@ -515,14 +526,25 @@
             animation: fadeInUp 0.8s ease forwards;
         }
 
-        .relationship-item:nth-child(1) { animation-delay: 0.6s; }
-        .relationship-item:nth-child(2) { animation-delay: 0.8s; }
-        .relationship-item:nth-child(3) { animation-delay: 1s; }
-        .relationship-item:nth-child(4) { animation-delay: 1.2s; }
+        .relationship-item:nth-child(1) {
+            animation-delay: 0.6s;
+        }
+
+        .relationship-item:nth-child(2) {
+            animation-delay: 0.8s;
+        }
+
+        .relationship-item:nth-child(3) {
+            animation-delay: 1s;
+        }
+
+        .relationship-item:nth-child(4) {
+            animation-delay: 1.2s;
+        }
 
         .relationship-item:hover {
             transform: translateX(8px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .relationship-item h3 {
@@ -701,9 +723,19 @@
         }
 
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
         }
 
         /* 加载动画 */
@@ -741,7 +773,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .loader-text {
@@ -759,6 +793,18 @@
             animation: expandLine 0.8s ease forwards;
         }
 
+        /* 好友专属内容即时显示，避免解锁后等待动画 */
+        #friends-section .post-card,
+        #friends-section .friend-post,
+        #friends-section .roast-section,
+        #friends-section .relationship-item,
+        #friends-section .comparison-table,
+        #friends-section .interactive {
+            animation: none !important;
+            opacity: 1 !important;
+            transform: none !important;
+        }
+
         @keyframes expandLine {
             to {
                 transform: scaleX(1);
@@ -767,6 +813,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- 加载动画 -->
     <div class="loader" id="loader">
@@ -805,29 +852,29 @@
                 <div class="meta">2026年 · 损友圈特辑</div>
             </header>
 
-        <!-- 关于我板块 -->
-        <div id="about-section" style="display: block;">
-            <!-- 文章：关于我 -->
-            <article class="post-card" id="about">
-                <h2>关于我</h2>
-                <div class="date">2026-03-01 · 个人简介</div>
-                <div class="post-content">
-                    <p>我是<span class="highlight">kk哥</span>，一个<span class="highlight">Dota2游廊开发工程师</span>。</p>
-                </div>
-            </article>
+            <!-- 关于我板块 -->
+            <div id="about-section" style="display: none;">
+                <!-- 文章：关于我 -->
+                <article class="post-card" id="about">
+                    <h2>关于我</h2>
+                    <div class="date">2026-03-01 · 个人简介</div>
+                    <div class="post-content">
+                        <p>我是<span class="highlight">kk哥</span>，一个<span class="highlight">Dota2游廊开发工程师</span>。</p>
+                    </div>
+                </article>
 
-            <!-- 文章：兴趣爱好 -->
-            <article class="post-card">
-                <h2>我的兴趣爱好</h2>
-                <div class="date">2026-03-01 · 生活记录</div>
-                <div class="post-content">
-                    <p>我是一个<span class="highlight">苦逼牛马</span>。</p>
-                </div>
-            </article>
-        </div>
+                <!-- 文章：兴趣爱好 -->
+                <article class="post-card">
+                    <h2>我的兴趣爱好</h2>
+                    <div class="date">2026-03-01 · 生活记录</div>
+                    <div class="post-content">
+                        <p>我是一个<span class="highlight">苦逼牛马</span>。</p>
+                    </div>
+                </article>
+            </div>
 
-        <!-- 文章：损友故事（已隐藏） -->
-        <!-- <article class="post-card" id="friends">
+            <!-- 文章：损友故事（已隐藏） -->
+            <!-- <article class="post-card" id="friends">
             <h2>我的损友们</h2>
             <div class="date">2026-03-01 · 损友圈特辑</div>
             <div class="post-content">
@@ -892,11 +939,9 @@
             </div>
         </article> -->
 
-        <!-- 分隔线 -->
-        <div class="post-divider"></div>
 
-        <!-- 文章：损友语录（已隐藏） -->
-        <!-- <article class="post-card" id="quotes">
+            <!-- 文章：损友语录（已隐藏） -->
+            <!-- <article class="post-card" id="quotes">
             <h2>损友语录</h2>
             <div class="date">2026-03-01 · 经典语录</div>
             <div class="roast-section">
@@ -919,11 +964,9 @@
             </div>
         </article> -->
 
-        <!-- 分隔线 -->
-        <div class="post-divider"></div>
 
-        <!-- 文章：关系状态（已隐藏） -->
-        <!-- <article class="post-card" id="relationship">
+            <!-- 文章：关系状态（已隐藏） -->
+            <!-- <article class="post-card" id="relationship">
             <h2>关系状态</h2>
             <div class="date">2026-03-01 · 人际关系</div>
             <div class="relationship-list">
@@ -946,11 +989,9 @@
             </div>
         </article> -->
 
-        <!-- 分隔线 -->
-        <div class="post-divider"></div>
 
-        <!-- 文章：损友对比（已隐藏） -->
-        <!-- <article class="post-card">
+            <!-- 文章：损友对比（已隐藏） -->
+            <!-- <article class="post-card">
             <h2>损友对比</h2>
             <div class="date">2026-03-01 · 趣味对比</div>
             <table class="comparison-table">
@@ -976,217 +1017,246 @@
             </table>
         </article> -->
 
-        <!-- 损友内容显示按钮 -->
-        <section class="interactive">
-            <h2>想看损友内容吗？</h2>
-            <p>输入对应的外号名字，解锁损友内容！</p>
-            <div style="margin: 20px 0;">
-                <input type="text" id="friendInput" placeholder="输入外号解锁内容" 
-                       style="padding: 12px 20px; font-size: 1em; border: 2px solid var(--border); border-radius: 5px; width: 250px; margin-right: 10px;">
-                <button onclick="unlockFriend()">解锁内容</button>
-            </div>
-            <div id="friendMessage" style="margin-top: 15px; color: var(--gray);"></div>
-        </section>
+            <!-- 损友内容显示按钮 -->
+            <section class="interactive" id="friend-unlock-section" style="display: none;">
+                <h2>想看损友内容吗？</h2>
+                <p>输入对应的外号名字，解锁损友内容！</p>
+                <div style="margin: 20px 0;">
+                    <input type="text" id="friendInput" placeholder="输入外号解锁内容"
+                        style="padding: 12px 20px; font-size: 1em; border: 2px solid var(--border); border-radius: 5px; width: 250px; margin-right: 10px;">
+                    <button onclick="unlockFriend()">解锁内容</button>
+                </div>
+                <div id="friendMessage" style="margin-top: 15px; color: var(--gray);"></div>
+            </section>
 
-        <!-- 好友专属板块 -->
-        <div id="friends-section" style="display: none;">
-            <!-- 损友内容显示区域 -->
-            <div id="friendContent">
-                <!-- 损友故事 -->
-                <article class="post-card" id="friends">
-                    <h2>我的损友们</h2>
-                    <div class="date">2026-03-01 · 损友圈特辑</div>
+            <!-- 好友专属板块 -->
+            <div id="friends-section" style="display: none;">
+                <!-- 损友内容显示区域 -->
+                <div id="friendContent" style="display: none;">
+                    <!-- 损友故事 -->
+                    <article class="post-card" id="friends">
+                        <h2>我的损友们</h2>
+                        <div class="date">2026-03-01 · 损友圈特辑</div>
+                        <div class="post-content">
+                            <p>我有两位<span class="highlight">损友</span>，他们是我生活中不可或缺的一部分。</p>
+                        </div>
+
+                        <!-- 莫总 -->
+                        <div class="friend-post" id="mo-content" style="display: none;">
+                            <h3>莫总</h3>
+                            <div class="nickname">外号：人生导师（装逼版）</div>
+                            <div class="tags">
+                                <span class="tag">高高瘦瘦帅帅</span>
+                                <span class="tag">严肃搞笑</span>
+                                <span class="tag">千万级操盘手</span>
+                                <span class="tag">13年老友</span>
+                            </div>
+                            <p>认识<span class="highlight">13年</span>的发小，表面上是<span
+                                    class="highlight">千万级别抖音商家账号操盘手</span>，实际上是个<span class="highlight">严肃的搞笑担当</span>。
+                            </p>
+                            <p>长得<span class="highlight">高高瘦瘦帅帅的</span>，但一开口就暴露了<span
+                                    class="highlight">闷骚的本质</span>。总是一副<span class="highlight">"我懂人生"</span>的样子，其实内心戏超多。
+                            </p>
+
+                            <div class="story-list">
+                                <div class="story-item">
+                                    <span class="laugh">😂</span>
+                                    <h4>年度最佳笑料：叫我妈叫姐</h4>
+                                    <p>今年过年他来我家做客，我妈跟他唠家常时，<span class="highlight">我妈发现</span>他居然要叫我妈叫<span
+                                            class="highlight">"姐"</span>！更搞笑的是，连莫总自己都不相信，我当时就<span
+                                            class="highlight">很难绷</span>，这辈分乱得我都想叫他<span class="highlight">"叔"</span>了。
+                                    </p>
+                                </div>
+                                <div class="story-item">
+                                    <span class="laugh">🤣</span>
+                                    <h4>人生导师的日常</h4>
+                                    <p>平时总是一副<span class="highlight">"我懂人生"</span>的样子，结果过年连辈分都搞不清楚。这就是<span
+                                            class="highlight">千万级操盘手</span>的<span class="highlight">真实水平</span>？</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 啊猪 -->
+                        <div class="friend-post" id="zhu-content" style="display: none;">
+                            <h3>啊猪（死人猪）</h3>
+                            <div class="nickname">外号：死人猪（原名：小猪）</div>
+                            <div class="tags">
+                                <span class="tag">秃顶稀疏</span>
+                                <span class="tag">闷骚怪</span>
+                                <span class="tag">倒霉鬼</span>
+                                <span class="tag">唱歌比我差</span>
+                            </div>
+                            <p>姓朱，刚认识时叫他<span class="highlight">"小猪"</span>，熟了就升级为<span
+                                    class="highlight">"死人猪"</span>。一个<span class="highlight">稀疏的瘦子</span>，头顶<span
+                                    class="highlight">"地中海"风格</span>。</p>
+                            <p>性格是<span class="highlight">闷骚怪</span>，平时不说话，一说话就<span
+                                    class="highlight">语出惊人</span>。更惨的是，他是个<span
+                                    class="highlight">倒霉鬼</span>，每次跟他出门就没有好事情发生。</p>
+
+                            <div class="story-list">
+                                <div class="story-item">
+                                    <span class="laugh">😅</span>
+                                    <h4>唱歌水平鉴定</h4>
+                                    <p>唱歌确实<span class="highlight">好听</span>，但比我差多了。每次KTV我都是<span
+                                            class="highlight">麦霸</span>，他只能在旁边<span class="highlight">默默伴唱</span>。</p>
+                                </div>
+                                <div class="story-item">
+                                    <span class="laugh">🤣</span>
+                                    <h4>倒霉鬼的日常</h4>
+                                    <p>每次跟他出门，不是<span class="highlight">丢东西</span>就是<span
+                                            class="highlight">遇倒霉事</span>。我怀疑他是不是<span
+                                            class="highlight">水逆体质</span>，建议他<span class="highlight">天天看黄历</span>。</p>
+                                </div>
+                                <div class="story-item">
+                                    <span class="laugh">😂</span>
+                                    <h4>见面频率</h4>
+                                    <p>一年难见一面，每次见面都像是<span class="highlight">"久别重逢"</span>。不过虽然见面少，但<span
+                                            class="highlight">损友</span>的<span class="highlight">感情</span>还在。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- 损友语录 -->
+                    <article class="post-card" id="quotes">
+                        <h2>损友语录</h2>
+                        <div class="date">2026-03-01 · 经典语录</div>
+                        <div class="roast-section">
+                            <div class="roast-quote"
+                                onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='',300)">
+                                <div class="speaker">莫总</div>
+                                <div class="quote">"我今年25岁，应该叫你妈叫姐"</div>
+                            </div>
+                            <div class="roast-quote"
+                                onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='',300)">
+                                <div class="speaker">啊猪</div>
+                                <div class="quote">"我今天又倒霉了，出门踩狗屎"</div>
+                            </div>
+                            <div class="roast-quote"
+                                onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='',300)">
+                                <div class="speaker">kk哥</div>
+                                <div class="quote">"你们两个，一个装逼，一个倒霉"</div>
+                            </div>
+                            <div class="roast-quote"
+                                onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='',300)">
+                                <div class="speaker">kk哥</div>
+                                <div class="quote">"莫总，你还是叫我妈叫阿姨吧"</div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- 关系状态 -->
+                    <article class="post-card" id="relationship">
+                        <h2>关系状态</h2>
+                        <div class="date">2026-03-01 · 人际关系</div>
+                        <div class="relationship-list">
+                            <div class="relationship-item"
+                                onclick="this.style.transform='translateX(10px)'; setTimeout(()=>this.style.transform='',300)">
+                                <h3>🤝 莫总</h3>
+                                <p>13年老友，人生导师（自称）</p>
+                            </div>
+                            <div class="relationship-item"
+                                onclick="this.style.transform='translateX(10px)'; setTimeout(()=>this.style.transform='',300)">
+                                <h3>🐷 啊猪</h3>
+                                <p>一年难见一面的损友</p>
+                            </div>
+                            <div class="relationship-item"
+                                onclick="this.style.transform='translateX(10px)'; setTimeout(()=>this.style.transform='',300)">
+                                <h3>🎤 共同爱好</h3>
+                                <p>唱歌（虽然水平不同）</p>
+                            </div>
+                            <div class="relationship-item"
+                                onclick="this.style.transform='translateX(10px)'; setTimeout(()=>this.style.transform='',300)">
+                                <h3>😂 损友程度</h3>
+                                <p>互相伤害，越损越亲</p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- 损友对比 -->
+                    <article class="post-card">
+                        <h2>损友对比</h2>
+                        <div class="date">2026-03-01 · 趣味对比</div>
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>损友</th>
+                                    <th>总分</th>
+                                    <th>特点</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    onclick="this.style.background='var(--light-gray)'; setTimeout(()=>this.style.background='',300)">
+                                    <td>莫总</td>
+                                    <td class="score">8/10</td>
+                                    <td>装逼⭐⭐⭐⭐⭐ 搞笑⭐⭐⭐⭐ 靠谱⭐⭐⭐⭐⭐</td>
+                                </tr>
+                                <tr
+                                    onclick="this.style.background='var(--light-gray)'; setTimeout(()=>this.style.background='',300)">
+                                    <td>啊猪</td>
+                                    <td class="score">6/10</td>
+                                    <td>倒霉⭐⭐⭐⭐⭐ 闷骚⭐⭐⭐⭐⭐ 唱歌⭐⭐⭐</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </article>
+
+                    <!-- 互动区域 -->
+                    <section class="interactive">
+                        <h2>想认识我的损友们吗？</h2>
+                        <p>点击按钮，看看你会遇到哪个"惊喜"！</p>
+                        <button onclick="showRoast('mo')">吐槽莫总</button>
+                        <button onclick="showRoast('zhu')">吐槽啊猪</button>
+                        <button onclick="showRoast('both')">一起吐槽</button>
+                    </section>
+                </div>
+            </div>
+
+            <!-- 留言板块 -->
+            <div id="guestbook-section" style="display: block;">
+                <article class="post-card" id="guestbook">
+                    <h2>留言板块</h2>
+                    <div class="date">2026-03-01 · 访客留言</div>
                     <div class="post-content">
-                        <p>我有两位<span class="highlight">损友</span>，他们是我生活中不可或缺的一部分。</p>
+                        <p>欢迎在下方留言！所有留言都会公开显示。</p>
                     </div>
 
-                    <!-- 莫总 -->
-                    <div class="friend-post" id="mo-content" style="display: block;">
-                        <h3>莫总</h3>
-                        <div class="nickname">外号：人生导师（装逼版）</div>
-                        <div class="tags">
-                            <span class="tag">高高瘦瘦帅帅</span>
-                            <span class="tag">严肃搞笑</span>
-                            <span class="tag">千万级操盘手</span>
-                            <span class="tag">13年老友</span>
+                    <!-- 留言表单 -->
+                    <div style="margin-top: 20px; padding: 20px; background: var(--light-gray); border-radius: 10px;">
+                        <div style="margin-bottom: 15px;">
+                            <input type="text" id="guestName" placeholder="你的名字"
+                                style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 5px; margin-bottom: 10px;">
                         </div>
-                        <p>认识<span class="highlight">13年</span>的发小，表面上是<span class="highlight">千万级别抖音商家账号操盘手</span>，实际上是个<span class="highlight">严肃的搞笑担当</span>。</p>
-                        <p>长得<span class="highlight">高高瘦瘦帅帅的</span>，但一开口就暴露了<span class="highlight">闷骚的本质</span>。总是一副<span class="highlight">"我懂人生"</span>的样子，其实内心戏超多。</p>
-                        
-                        <div class="story-list">
-                            <div class="story-item">
-                                <span class="laugh">😂</span>
-                                <h4>年度最佳笑料：叫我妈叫姐</h4>
-                                <p>今年过年他来我家做客，我妈跟他唠家常时，<span class="highlight">我妈发现</span>他居然要叫我妈叫<span class="highlight">"姐"</span>！更搞笑的是，连莫总自己都不相信，我当时就<span class="highlight">很难绷</span>，这辈分乱得我都想叫他<span class="highlight">"叔"</span>了。</p>
-                            </div>
-                            <div class="story-item">
-                                <span class="laugh">🤣</span>
-                                <h4>人生导师的日常</h4>
-                                <p>平时总是一副<span class="highlight">"我懂人生"</span>的样子，结果过年连辈分都搞不清楚。这就是<span class="highlight">千万级操盘手</span>的<span class="highlight">真实水平</span>？</p>
-                            </div>
+                        <div style="margin-bottom: 15px;">
+                            <textarea id="guestMessage" placeholder="留言内容" rows="4"
+                                style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 5px; resize: vertical;"></textarea>
                         </div>
+                        <button onclick="submitGuestbook()"
+                            style="padding: 12px 30px; background: var(--black); color: var(--white); border: none; border-radius: 5px; cursor: pointer; font-weight: 500;">提交留言</button>
                     </div>
 
-                    <!-- 啊猪 -->
-                    <div class="friend-post" id="zhu-content" style="display: block;">
-                        <h3>啊猪（死人猪）</h3>
-                        <div class="nickname">外号：死人猪（原名：小猪）</div>
-                        <div class="tags">
-                            <span class="tag">秃顶稀疏</span>
-                            <span class="tag">闷骚怪</span>
-                            <span class="tag">倒霉鬼</span>
-                            <span class="tag">唱歌比我差</span>
-                        </div>
-                        <p>姓朱，刚认识时叫他<span class="highlight">"小猪"</span>，熟了就升级为<span class="highlight">"死人猪"</span>。一个<span class="highlight">稀疏的瘦子</span>，头顶<span class="highlight">"地中海"风格</span>。</p>
-                        <p>性格是<span class="highlight">闷骚怪</span>，平时不说话，一说话就<span class="highlight">语出惊人</span>。更惨的是，他是个<span class="highlight">倒霉鬼</span>，每次跟他出门就没有好事情发生。</p>
-                        
-                        <div class="story-list">
-                            <div class="story-item">
-                                <span class="laugh">😅</span>
-                                <h4>唱歌水平鉴定</h4>
-                                <p>唱歌确实<span class="highlight">好听</span>，但比我差多了。每次KTV我都是<span class="highlight">麦霸</span>，他只能在旁边<span class="highlight">默默伴唱</span>。</p>
-                            </div>
-                            <div class="story-item">
-                                <span class="laugh">🤣</span>
-                                <h4>倒霉鬼的日常</h4>
-                                <p>每次跟他出门，不是<span class="highlight">丢东西</span>就是<span class="highlight">遇倒霉事</span>。我怀疑他是不是<span class="highlight">水逆体质</span>，建议他<span class="highlight">天天看黄历</span>。</p>
-                            </div>
-                            <div class="story-item">
-                                <span class="laugh">😂</span>
-                                <h4>见面频率</h4>
-                                <p>一年难见一面，每次见面都像是<span class="highlight">"久别重逢"</span>。不过虽然见面少，但<span class="highlight">损友</span>的<span class="highlight">感情</span>还在。</p>
-                            </div>
-                        </div>
+                    <!-- 留言列表 -->
+                    <div id="guestbookList" style="margin-top: 30px;">
+                        <h3 style="margin-bottom: 15px; font-weight: 600;">留言列表</h3>
+                        <div id="guestbookMessages"></div>
                     </div>
                 </article>
-
-                <!-- 损友语录 -->
-                <article class="post-card" id="quotes">
-                    <h2>损友语录</h2>
-                    <div class="date">2026-03-01 · 经典语录</div>
-                    <div class="roast-section">
-                        <div class="roast-quote" onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='',300)">
-                            <div class="speaker">莫总</div>
-                            <div class="quote">"我今年25岁，应该叫你妈叫姐"</div>
-                        </div>
-                        <div class="roast-quote" onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='',300)">
-                            <div class="speaker">啊猪</div>
-                            <div class="quote">"我今天又倒霉了，出门踩狗屎"</div>
-                        </div>
-                        <div class="roast-quote" onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='',300)">
-                            <div class="speaker">kk哥</div>
-                            <div class="quote">"你们两个，一个装逼，一个倒霉"</div>
-                        </div>
-                        <div class="roast-quote" onclick="this.style.transform='scale(1.02)'; setTimeout(()=>this.style.transform='',300)">
-                            <div class="speaker">kk哥</div>
-                            <div class="quote">"莫总，你还是叫我妈叫阿姨吧"</div>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- 关系状态 -->
-                <article class="post-card" id="relationship">
-                    <h2>关系状态</h2>
-                    <div class="date">2026-03-01 · 人际关系</div>
-                    <div class="relationship-list">
-                        <div class="relationship-item" onclick="this.style.transform='translateX(10px)'; setTimeout(()=>this.style.transform='',300)">
-                            <h3>🤝 莫总</h3>
-                            <p>13年老友，人生导师（自称）</p>
-                        </div>
-                        <div class="relationship-item" onclick="this.style.transform='translateX(10px)'; setTimeout(()=>this.style.transform='',300)">
-                            <h3>🐷 啊猪</h3>
-                            <p>一年难见一面的损友</p>
-                        </div>
-                        <div class="relationship-item" onclick="this.style.transform='translateX(10px)'; setTimeout(()=>this.style.transform='',300)">
-                            <h3>🎤 共同爱好</h3>
-                            <p>唱歌（虽然水平不同）</p>
-                        </div>
-                        <div class="relationship-item" onclick="this.style.transform='translateX(10px)'; setTimeout(()=>this.style.transform='',300)">
-                            <h3>😂 损友程度</h3>
-                            <p>互相伤害，越损越亲</p>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- 损友对比 -->
-                <article class="post-card">
-                    <h2>损友对比</h2>
-                    <div class="date">2026-03-01 · 趣味对比</div>
-                    <table class="comparison-table">
-                        <thead>
-                            <tr>
-                                <th>损友</th>
-                                <th>总分</th>
-                                <th>特点</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr onclick="this.style.background='var(--light-gray)'; setTimeout(()=>this.style.background='',300)">
-                                <td>莫总</td>
-                                <td class="score">8/10</td>
-                                <td>装逼⭐⭐⭐⭐⭐ 搞笑⭐⭐⭐⭐ 靠谱⭐⭐⭐⭐⭐</td>
-                            </tr>
-                            <tr onclick="this.style.background='var(--light-gray)'; setTimeout(()=>this.style.background='',300)">
-                                <td>啊猪</td>
-                                <td class="score">6/10</td>
-                                <td>倒霉⭐⭐⭐⭐⭐ 闷骚⭐⭐⭐⭐⭐ 唱歌⭐⭐⭐</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </article>
-
-                <!-- 互动区域 -->
-                <section class="interactive">
-                    <h2>想认识我的损友们吗？</h2>
-                    <p>点击按钮，看看你会遇到哪个"惊喜"！</p>
-                    <button onclick="showRoast('mo')">吐槽莫总</button>
-                    <button onclick="showRoast('zhu')">吐槽啊猪</button>
-                    <button onclick="showRoast('both')">一起吐槽</button>
-                </section>
             </div>
-        </div>
 
-        <!-- 留言板块 -->
-        <div id="guestbook-section" style="display: none;">
-            <article class="post-card" id="guestbook">
-                <h2>留言板块</h2>
-                <div class="date">2026-03-01 · 访客留言</div>
-                <div class="post-content">
-                    <p>欢迎在下方留言！所有留言都会公开显示。</p>
-                </div>
-                
-                <!-- 留言表单 -->
-                <div style="margin-top: 20px; padding: 20px; background: var(--light-gray); border-radius: 10px;">
-                    <div style="margin-bottom: 15px;">
-                        <input type="text" id="guestName" placeholder="你的名字" 
-                               style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 5px; margin-bottom: 10px;">
-                    </div>
-                    <div style="margin-bottom: 15px;">
-                        <textarea id="guestMessage" placeholder="留言内容" rows="4" 
-                                  style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 5px; resize: vertical;"></textarea>
-                    </div>
-                    <button onclick="submitGuestbook()" style="padding: 12px 30px; background: var(--black); color: var(--white); border: none; border-radius: 5px; cursor: pointer; font-weight: 500;">提交留言</button>
-                </div>
-
-                <!-- 留言列表 -->
-                <div id="guestbookList" style="margin-top: 30px;">
-                    <h3 style="margin-bottom: 15px; font-weight: 600;">留言列表</h3>
-                    <div id="guestbookMessages"></div>
-                </div>
-            </article>
-        </div>
-
-        <!-- 底部 -->
-        <footer class="blog-footer">
-            <div class="tagline">爱咋咋地老子最吊</div>
-            <p>kk哥的博客 · 2026年</p>
-        </footer>
+            <!-- 底部 -->
+            <footer class="blog-footer">
+                <div class="tagline">爱咋咋地老子最吊</div>
+                <p>kk哥的博客 · 2026年</p>
+            </footer>
         </main>
 
         <!-- 右侧边栏 -->
         <aside class="sidebar-right">
             <div style="text-align: center; padding: 20px 0;">
-                <h3 style="color: var(--gray); font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">其他</h3>
+                <h3
+                    style="color: var(--gray); font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">
+                    其他</h3>
                 <p style="color: var(--gray); font-size: 0.9em; line-height: 1.6;">
                     这里可以放一些额外的信息，比如：
                     <br><br>
@@ -1204,7 +1274,7 @@
 
     <script>
         // 页面加载动画
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             setTimeout(() => {
                 document.getElementById('loader').classList.add('hidden');
             }, 1000);
@@ -1245,23 +1315,45 @@
             }
         }
 
+        // 锁定损友内容（未输入正确外号前不显示）
+        function lockFriendContent() {
+            const message = document.getElementById('friendMessage');
+            const content = document.getElementById('friendContent');
+            const moContent = document.getElementById('mo-content');
+            const zhuContent = document.getElementById('zhu-content');
+
+            if (moContent) {
+                moContent.style.display = 'none';
+            }
+            if (zhuContent) {
+                zhuContent.style.display = 'none';
+            }
+            if (content) {
+                content.style.display = 'none';
+            }
+            if (message) {
+                message.innerHTML = '🔒 请输入好友外号后解锁内容';
+                message.style.color = 'var(--gray)';
+            }
+        }
+
         // 显示留言板板块
         function showGuestbook() {
             // 隐藏所有板块
             hideAllSections();
-            
+
             // 显示留言板板块
             const guestbookSection = document.getElementById('guestbook-section');
             if (guestbookSection) {
                 guestbookSection.style.display = 'block';
             }
-            
+
             // 滚动到留言板区域
             const guestbook = document.getElementById('guestbook');
             if (guestbook) {
                 guestbook.scrollIntoView({ behavior: 'smooth' });
             }
-            
+
             // 更新导航栏激活状态
             updateNavActive('guestbook');
         }
@@ -1270,19 +1362,19 @@
         function showAbout() {
             // 隐藏所有板块
             hideAllSections();
-            
+
             // 显示关于我板块
             const aboutSection = document.getElementById('about-section');
             if (aboutSection) {
                 aboutSection.style.display = 'block';
             }
-            
+
             // 滚动到关于我区域
             const about = document.getElementById('about');
             if (about) {
                 about.scrollIntoView({ behavior: 'smooth' });
             }
-            
+
             // 更新导航栏激活状态
             updateNavActive('about');
         }
@@ -1291,26 +1383,34 @@
         function showFriends() {
             // 隐藏所有板块
             hideAllSections();
-            
+
+            // 显示解锁输入区
+            const unlockSection = document.getElementById('friend-unlock-section');
+            if (unlockSection) {
+                unlockSection.style.display = 'block';
+            }
+
             // 显示好友专属板块
             const friendsSection = document.getElementById('friends-section');
             if (friendsSection) {
                 friendsSection.style.display = 'block';
             }
-            
-            // 滚动到好友专属区域
-            const friends = document.getElementById('friends');
-            if (friends) {
-                friends.scrollIntoView({ behavior: 'smooth' });
+
+            // 每次进入好友专属都需要重新解锁
+            lockFriendContent();
+
+            // 滚动到解锁输入区域
+            if (unlockSection) {
+                unlockSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
-            
+
             // 更新导航栏激活状态
             updateNavActive('friends');
         }
 
         // 隐藏所有板块
         function hideAllSections() {
-            const sections = ['about-section', 'guestbook-section', 'friends-section'];
+            const sections = ['about-section', 'guestbook-section', 'friends-section', 'friend-unlock-section'];
             sections.forEach(sectionId => {
                 const section = document.getElementById(sectionId);
                 if (section) {
@@ -1325,7 +1425,7 @@
             navItems.forEach(item => {
                 item.classList.remove('active');
             });
-            
+
             // 根据激活的板块添加active类
             if (activeSection === 'guestbook') {
                 navItems[0].classList.add('active');
@@ -1361,7 +1461,7 @@
 
             const randomRoast = roasts[type][Math.floor(Math.random() * roasts[type].length)];
             alert(randomRoast);
-            
+
             // 添加抖动效果
             document.body.classList.add('shake');
             setTimeout(() => {
@@ -1371,7 +1471,7 @@
 
         // 平滑滚动
         document.querySelectorAll('.blog-nav a').forEach(link => {
-            link.addEventListener('click', function(e) {
+            link.addEventListener('click', function (e) {
                 e.preventDefault();
                 const targetId = this.getAttribute('href');
                 const targetElement = document.querySelector(targetId);
@@ -1386,7 +1486,7 @@
 
         // 高亮文本点击效果
         document.querySelectorAll('.highlight').forEach(highlight => {
-            highlight.addEventListener('click', function() {
+            highlight.addEventListener('click', function () {
                 this.style.background = 'var(--black)';
                 this.style.color = 'var(--white)';
                 setTimeout(() => {
@@ -1398,7 +1498,7 @@
 
         // 标签点击效果
         document.querySelectorAll('.tag').forEach(tag => {
-            tag.addEventListener('click', function() {
+            tag.addEventListener('click', function () {
                 this.style.transform = 'scale(1.2)';
                 setTimeout(() => {
                     this.style.transform = '';
@@ -1484,13 +1584,17 @@
         }
 
         // 页面加载时初始化
-        window.addEventListener('load', function() {
-            // 默认显示关于我板块
-            showAbout();
-            
+        window.addEventListener('load', function () {
+            // 默认显示留言板块
+            showGuestbook();
+
+            // 默认锁定好友内容
+            lockFriendContent();
+
             // 加载留言
             loadGuestbook();
         });
     </script>
 </body>
+
 </html>
