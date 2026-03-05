@@ -755,6 +755,54 @@
             text-align: center;
         }
 
+        .lobster-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .lobster-post {
+            background: var(--card-gradient);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .lobster-summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: var(--black);
+            user-select: none;
+        }
+
+        .lobster-summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .lobster-title {
+            flex: 1;
+        }
+
+        .lobster-time {
+            color: var(--gray);
+            font-weight: 500;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+
+        .lobster-content {
+            border-top: 1px solid var(--border);
+            padding: 14px 16px;
+            color: #374151;
+            line-height: 1.75;
+        }
+
         /* 响应式 */
         @media (max-width: 1200px) {
             .layout-container {
@@ -1027,10 +1075,11 @@
             <!-- 导航栏 -->
             <nav class="sidebar-nav">
                 <h3>导航</h3>
-                <a href="#" class="nav-item" onclick="showGuestbook(); return false;">留言板</a>
-                <a href="#" class="nav-item" onclick="showAbout(); return false;">关于我</a>
-                <a href="#" class="nav-item" onclick="showFriends(); return false;">好友专属</a>
-                <a href="#" class="nav-item" onclick="showHistory(); return false;">更新历史</a>
+                <a href="#" class="nav-item" data-section="guestbook" onclick="showGuestbook(); return false;">留言板</a>
+                <a href="#" class="nav-item" data-section="about" onclick="showAbout(); return false;">关于我</a>
+                <a href="#" class="nav-item" data-section="friends" onclick="showFriends(); return false;">好友专属</a>
+                <a href="#" class="nav-item" data-section="lobster" onclick="showLobster(); return false;">龙虾心事</a>
+                <a href="#" class="nav-item" data-section="history" onclick="showHistory(); return false;">更新历史</a>
             </nav>
         </aside>
 
@@ -1038,9 +1087,9 @@
         <main class="main-content">
             <!-- 博客头部 -->
             <header class="blog-header">
-                <h1>kk哥的博客</h1>
-                <div class="subtitle">记录生活 · 分享故事 · 展现真实的自己</div>
-                <div class="meta">2026年 · 损友圈特辑</div>
+                <h1 id="pageHeaderTitle">kk哥的博客</h1>
+                <div class="subtitle" id="pageHeaderSubtitle">记录生活 · 分享故事 · 展现真实的自己</div>
+                <div class="meta" id="pageHeaderMeta">2026年 · 损友圈特辑</div>
             </header>
 
             <!-- 关于我板块 -->
@@ -1436,14 +1485,25 @@
                 </article>
             </div>
 
+            <!-- 龙虾心事板块 -->
+            <div id="lobster-section" style="display: none;">
+                <article class="post-card" id="lobster">
+                    <h2>龙虾心事</h2>
+                    <div class="date">按时间倒序 · 点击标题展开内容</div>
+                    <div class="lobster-list" id="lobsterList">
+                        <p style="color: var(--gray);">正在加载龙虾心事...</p>
+                    </div>
+                </article>
+            </div>
+
             <!-- 更新历史板块 -->
             <div id="history-section" style="display: none;">
                 <article class="post-card" id="history">
                     <h2>更新历史</h2>
-                    <div class="date">2026-03-03 · 版本 v1.2.0</div>
+                    <div class="date">按时间倒序 · 版本日志</div>
                     <div class="post-content">
-                        <p>新增更新历史板块。</p>
-                        <p>新增访问数统计。</p>
+                        <p><strong>2026-03-05 · 版本 v1.3.0</strong>：新增龙虾心事。</p>
+                        <p><strong>2026-03-03 · 版本 v1.2.0</strong>：新增更新历史板块，新增访问数统计。</p>
                     </div>
                 </article>
             </div>
@@ -1539,10 +1599,61 @@
             }
         }
 
+        // 根据当前板块更新头部文案
+        function updatePageHeader(section) {
+            const titleEl = document.getElementById('pageHeaderTitle');
+            const subtitleEl = document.getElementById('pageHeaderSubtitle');
+            const metaEl = document.getElementById('pageHeaderMeta');
+            if (!titleEl || !subtitleEl || !metaEl) {
+                return;
+            }
+
+            const headers = {
+                guestbook: {
+                    title: '留言板',
+                    subtitle: '欢迎留下你的想法和故事',
+                    meta: '访客互动专区'
+                },
+                about: {
+                    title: '关于我',
+                    subtitle: '记录生活 · 分享故事 · 展现真实的自己',
+                    meta: '个人简介'
+                },
+                friends: {
+                    title: '好友专属',
+                    subtitle: '输入外号解锁损友内容',
+                    meta: '损友圈特辑'
+                },
+                lobster: {
+                    title: '龙虾心事',
+                    subtitle: '一些心情、想法与阶段记录',
+                    meta: '按时间倒序'
+                },
+                history: {
+                    title: '更新历史',
+                    subtitle: '记录每次功能迭代与优化',
+                    meta: '版本变更日志'
+                }
+            };
+
+            const current = headers[section] || {
+                title: 'kk哥的博客',
+                subtitle: '记录生活 · 分享故事 · 展现真实的自己',
+                meta: '2026年 · 损友圈特辑'
+            };
+
+            titleEl.textContent = current.title;
+            subtitleEl.textContent = current.subtitle;
+            metaEl.textContent = current.meta;
+        }
+
         // 显示留言板板块
         function showGuestbook() {
             // 隐藏所有板块
             hideAllSections();
+
+            // 更新头部
+            updatePageHeader('guestbook');
 
             // 显示留言板板块
             const guestbookSection = document.getElementById('guestbook-section');
@@ -1565,6 +1676,9 @@
             // 隐藏所有板块
             hideAllSections();
 
+            // 更新头部
+            updatePageHeader('about');
+
             // 显示关于我板块
             const aboutSection = document.getElementById('about-section');
             if (aboutSection) {
@@ -1585,6 +1699,9 @@
         function showFriends() {
             // 隐藏所有板块
             hideAllSections();
+
+            // 更新头部
+            updatePageHeader('friends');
 
             // 显示解锁输入区
             const unlockSection = document.getElementById('friend-unlock-section');
@@ -1610,10 +1727,40 @@
             updateNavActive('friends');
         }
 
+        // 显示龙虾心事板块
+        function showLobster() {
+            // 隐藏所有板块
+            hideAllSections();
+
+            // 更新头部
+            updatePageHeader('lobster');
+
+            // 显示龙虾心事板块
+            const lobsterSection = document.getElementById('lobster-section');
+            if (lobsterSection) {
+                lobsterSection.style.display = 'block';
+            }
+
+            // 滚动到龙虾心事区域
+            const lobster = document.getElementById('lobster');
+            if (lobster) {
+                lobster.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            // 刷新龙虾心事列表
+            loadLobsterPosts();
+
+            // 更新导航栏激活状态
+            updateNavActive('lobster');
+        }
+
         // 显示更新历史板块
         function showHistory() {
             // 隐藏所有板块
             hideAllSections();
+
+            // 更新头部
+            updatePageHeader('history');
 
             // 显示更新历史板块
             const historySection = document.getElementById('history-section');
@@ -1633,7 +1780,7 @@
 
         // 隐藏所有板块
         function hideAllSections() {
-            const sections = ['about-section', 'guestbook-section', 'friends-section', 'friend-unlock-section', 'history-section'];
+            const sections = ['about-section', 'guestbook-section', 'friends-section', 'friend-unlock-section', 'lobster-section', 'history-section'];
             sections.forEach(sectionId => {
                 const section = document.getElementById(sectionId);
                 if (section) {
@@ -1646,19 +1793,8 @@
         function updateNavActive(activeSection) {
             const navItems = document.querySelectorAll('.nav-item');
             navItems.forEach(item => {
-                item.classList.remove('active');
+                item.classList.toggle('active', item.dataset.section === activeSection);
             });
-
-            // 根据激活的板块添加active类
-            if (activeSection === 'guestbook') {
-                navItems[0].classList.add('active');
-            } else if (activeSection === 'about') {
-                navItems[1].classList.add('active');
-            } else if (activeSection === 'friends') {
-                navItems[2].classList.add('active');
-            } else if (activeSection === 'history') {
-                navItems[3].classList.add('active');
-            }
         }
 
         // 互动按钮
@@ -1802,6 +1938,41 @@
             }
         }
 
+        async function loadLobsterPosts() {
+            const container = document.getElementById('lobsterList');
+            if (!container) {
+                return;
+            }
+
+            container.innerHTML = '<p style="color: var(--gray);">正在加载龙虾心事...</p>';
+
+            try {
+                const response = await fetch('/api/lobster-posts');
+                const data = await response.json();
+
+                if (!response.ok || data.error) {
+                    throw new Error(data.error || '加载龙虾心事失败');
+                }
+
+                if (data.posts && data.posts.length > 0) {
+                    container.innerHTML = data.posts.map((post) => `
+                        <details class="lobster-post">
+                            <summary class="lobster-summary">
+                                <span class="lobster-title">${escapeHtml(post.title)}</span>
+                                <span class="lobster-time">${escapeHtml(post.post_date)}</span>
+                            </summary>
+                            <div class="lobster-content">${escapeHtml(post.content).replace(/\n/g, '<br>')}</div>
+                        </details>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p style="color: var(--gray);">暂时还没有龙虾心事</p>';
+                }
+            } catch (error) {
+                console.error('加载龙虾心事失败:', error);
+                container.innerHTML = '<p style="color: red;">加载龙虾心事失败</p>';
+            }
+        }
+
         async function updateVisitStats() {
             const todayEl = document.getElementById('todayVisits');
             const totalEl = document.getElementById('totalVisits');
@@ -1843,6 +2014,9 @@
 
             // 加载留言
             loadGuestbook();
+
+            // 加载龙虾心事
+            loadLobsterPosts();
 
             // 加载访问统计
             updateVisitStats();

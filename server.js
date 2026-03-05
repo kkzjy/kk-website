@@ -44,6 +44,49 @@ function queryVisitStats(callback) {
     );
 }
 
+function seedLobsterPostsIfEmpty() {
+    db.get('SELECT COUNT(*) AS count FROM lobster_posts', [], (err, row) => {
+        if (err) {
+            console.error('查询lobster_posts数量失败:', err.message);
+            return;
+        }
+
+        if (row && row.count > 0) {
+            return;
+        }
+
+        const seedPosts = [
+            {
+                title: '最近在忙里找平衡',
+                post_date: '2026-03-05',
+                content: '最近项目改动比较密集，白天推进功能，晚上回头补细节。慢慢意识到效率不是一直冲，而是把节奏稳住。'
+            },
+            {
+                title: '关于“想做”和“该做”',
+                post_date: '2026-03-03',
+                content: '有些事情是热爱驱动，有些事情是责任驱动。最近在练习把两者放在同一条路上，而不是对立起来。'
+            },
+            {
+                title: '给自己的一个小提醒',
+                post_date: '2026-03-01',
+                content: '别急着证明自己，先把每一件小事做扎实。真正的底气，通常都来自那些没人看到的积累。'
+            }
+        ];
+
+        const stmt = db.prepare('INSERT INTO lobster_posts (title, content, post_date) VALUES (?, ?, ?)');
+        seedPosts.forEach((post) => {
+            stmt.run([post.title, post.content, post.post_date]);
+        });
+        stmt.finalize((finalErr) => {
+            if (finalErr) {
+                console.error('初始化龙虾心事数据失败:', finalErr.message);
+            } else {
+                console.log('✅ 龙虾心事默认数据初始化完成');
+            }
+        });
+    });
+}
+
 // 创建SQLite数据库
 const db = new sqlite3.Database('./guestbook.db', (err) => {
     if (err) {
@@ -83,6 +126,23 @@ function initDatabase() {
             console.error('创建visit_stats表失败:', err.message);
         } else {
             console.log('✅ visit_stats表创建成功或已存在');
+        }
+    });
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS lobster_posts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            content TEXT NOT NULL,
+            post_date TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `, (err) => {
+        if (err) {
+            console.error('创建lobster_posts表失败:', err.message);
+        } else {
+            console.log('✅ lobster_posts表创建成功或已存在');
+            seedLobsterPostsIfEmpty();
         }
     });
 }
@@ -163,6 +223,28 @@ app.get('/api/guestbook/stats', (req, res) => {
             return res.status(500).json({ error: '统计留言失败' });
         }
         res.json({ count: row.count });
+    });
+});
+
+// 龙虾心事：读取文章列表（按日期倒序）
+app.get('/api/lobster-posts', (req, res) => {
+    const query = `
+        SELECT id, title, content, post_date, created_at
+        FROM lobster_posts
+        ORDER BY post_date DESC, id DESC
+        LIMIT 100
+    `;
+
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            console.error('查询龙虾心事失败:', err.message);
+            return res.status(500).json({ error: '查询龙虾心事失败' });
+        }
+
+        res.json({
+            posts: rows,
+            count: rows.length
+        });
     });
 });
 
@@ -436,6 +518,7 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`   - /api/guestbook - 留言板（GET/POST）`);
     console.log(`   - /api/guestbook/stats - 留言统计`);
     console.log(`   - /api/guestbook/:id - 删除留言`);
+    console.log(`   - /api/lobster-posts - 龙虾心事列表`);
     console.log(`   - /api/visits - 获取访问统计`);
     console.log(`   - /api/visits/track - 记录访问`);
     console.log(`\n💾 数据库: SQLite (guestbook.db)`);
