@@ -3,6 +3,46 @@ const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const app = express();
 const PORT = 3000;
+const visitThrottle = new Map();
+
+function getChinaDateString() {
+    return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' });
+}
+
+function getClientIp(req) {
+    const forwarded = req.headers['x-forwarded-for'];
+    if (typeof forwarded === 'string' && forwarded.length > 0) {
+        return forwarded.split(',')[0].trim();
+    }
+    return req.ip || req.socket?.remoteAddress || 'unknown';
+}
+
+function queryVisitStats(callback) {
+    const today = getChinaDateString();
+    db.get(
+        'SELECT count FROM visit_stats WHERE visit_date = ?',
+        [today],
+        (todayErr, todayRow) => {
+            if (todayErr) {
+                return callback(todayErr);
+            }
+            db.get(
+                'SELECT COALESCE(SUM(count), 0) AS total FROM visit_stats',
+                [],
+                (totalErr, totalRow) => {
+                    if (totalErr) {
+                        return callback(totalErr);
+                    }
+                    callback(null, {
+                        date: today,
+                        todayCount: todayRow ? todayRow.count : 0,
+                        totalCount: totalRow ? totalRow.total : 0
+                    });
+                }
+            );
+        }
+    );
+}
 
 // 创建SQLite数据库
 const db = new sqlite3.Database('./guestbook.db', (err) => {
@@ -29,6 +69,20 @@ function initDatabase() {
             console.error('创建表失败:', err.message);
         } else {
             console.log('✅ guestbook表创建成功或已存在');
+        }
+    });
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS visit_stats (
+            visit_date TEXT PRIMARY KEY,
+            count INTEGER NOT NULL DEFAULT 0,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `, (err) => {
+        if (err) {
+            console.error('创建visit_stats表失败:', err.message);
+        } else {
+            console.log('✅ visit_stats表创建成功或已存在');
         }
     });
 }
@@ -110,6 +164,66 @@ app.get('/api/guestbook/stats', (req, res) => {
         }
         res.json({ count: row.count });
     });
+});
+
+// 访问统计：读取今日和总访问数
+app.get('/api/visits', (req, res) => {
+    queryVisitStats((err, stats) => {
+        if (err) {
+            console.error('查询访问统计失败:', err.message);
+            return res.status(500).json({ error: '查询访问统计失败' });
+        }
+        res.json(stats);
+    });
+});
+
+// 访问统计：记录一次访问（同IP 30秒内只计一次）
+app.post('/api/visits/track', (req, res) => {
+    const today = getChinaDateString();
+    const ip = getClientIp(req);
+    const key = `${today}|${ip}`;
+    const now = Date.now();
+    const lastHitAt = visitThrottle.get(key) || 0;
+
+    if (now - lastHitAt < 30 * 1000) {
+        return queryVisitStats((err, stats) => {
+            if (err) {
+                console.error('查询访问统计失败:', err.message);
+                return res.status(500).json({ error: '查询访问统计失败' });
+            }
+            res.json({
+                counted: false,
+                ...stats
+            });
+        });
+    }
+
+    visitThrottle.set(key, now);
+    db.run(
+        `
+        INSERT INTO visit_stats (visit_date, count, updated_at)
+        VALUES (?, 1, CURRENT_TIMESTAMP)
+        ON CONFLICT(visit_date)
+        DO UPDATE SET count = count + 1, updated_at = CURRENT_TIMESTAMP
+        `,
+        [today],
+        (err) => {
+            if (err) {
+                console.error('记录访问失败:', err.message);
+                return res.status(500).json({ error: '记录访问失败' });
+            }
+            queryVisitStats((statsErr, stats) => {
+                if (statsErr) {
+                    console.error('查询访问统计失败:', statsErr.message);
+                    return res.status(500).json({ error: '查询访问统计失败' });
+                }
+                res.json({
+                    counted: true,
+                    ...stats
+                });
+            });
+        }
+    );
 });
 
 // 健康检查
@@ -322,5 +436,7 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`   - /api/guestbook - 留言板（GET/POST）`);
     console.log(`   - /api/guestbook/stats - 留言统计`);
     console.log(`   - /api/guestbook/:id - 删除留言`);
+    console.log(`   - /api/visits - 获取访问统计`);
+    console.log(`   - /api/visits/track - 记录访问`);
     console.log(`\n💾 数据库: SQLite (guestbook.db)`);
 });
