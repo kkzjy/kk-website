@@ -1,9 +1,11 @@
 const express = require('express');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
+const AIService = require('./aiService');
 const app = express();
 const PORT = 3000;
 const visitThrottle = new Map();
+const aiService = new AIService();
 
 function getChinaDateString() {
     return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Shanghai' });
@@ -246,6 +248,95 @@ app.get('/api/lobster-posts', (req, res) => {
             count: rows.length
         });
     });
+});
+
+// 龙虾心事：生成新的龙虾心事（AI集成版）
+app.post('/api/lobster-posts/generate', async (req, res) => {
+    const today = getChinaDateString();
+    
+    try {
+        // 检查今天是否已经生成过
+        const row = await new Promise((resolve, reject) => {
+            db.get('SELECT COUNT(*) as count FROM lobster_posts WHERE post_date = ?', [today], (err, row) => {
+                if (err) reject(err);
+                else resolve(row);
+            });
+        });
+        
+        if (row && row.count > 0) {
+            return res.json({ message: '今天已经生成过龙虾心事了', post: null });
+        }
+        
+        // 使用AI生成龙虾心事内容
+        const thought = await aiService.generateThoughtWithWeather(new Date());
+        
+        // 保存到数据库
+        const query = 'INSERT INTO lobster_posts (title, content, post_date) VALUES (?, ?, ?)';
+        await new Promise((resolve, reject) => {
+            db.run(query, [thought.title, thought.content, today], function(err) {
+                if (err) reject(err);
+                else resolve(this.lastID);
+            });
+        });
+        
+        // 获取刚插入的龙虾心事
+        const newPost = await new Promise((resolve, reject) => {
+            db.get('SELECT * FROM lobster_posts WHERE post_date = ?', [today], (err, row) => {
+                if (err) reject(err);
+                else resolve(row);
+            });
+        });
+        
+        res.json({ 
+            message: '龙虾心事生成成功', 
+            post: newPost,
+            source: 'AI生成'
+        });
+        
+    } catch (error) {
+        console.error('生成龙虾心事失败:', error.message);
+        return res.status(500).json({ error: '生成龙虾心事失败: ' + error.message });
+    }
+});
+
+// 获取天气信息（用于龙虾心事生成）
+app.get('/api/weather', async (req, res) => {
+    try {
+        const weather = await aiService.getWeather();
+        res.json(weather);
+    } catch (error) {
+        console.error('获取天气失败:', error.message);
+        res.status(500).json({ error: '获取天气失败' });
+    }
+});
+
+// 获取龙虾心事生成统计
+app.get('/api/lobster-posts/stats', async (req, res) => {
+    try {
+        const stats = await new Promise((resolve, reject) => {
+            db.get('SELECT COUNT(*) as total, MIN(post_date) as first_date, MAX(post_date) as last_date FROM lobster_posts', [], (err, row) => {
+                if (err) reject(err);
+                else resolve(row);
+            });
+        });
+        
+        const todayStats = await new Promise((resolve, reject) => {
+            db.get('SELECT COUNT(*) as today_count FROM lobster_posts WHERE post_date = date("now")', [], (err, row) => {
+                if (err) reject(err);
+                else resolve(row);
+            });
+        });
+        
+        res.json({
+            total: stats.total,
+            first_date: stats.first_date,
+            last_date: stats.last_date,
+            today_count: todayStats.today_count
+        });
+    } catch (error) {
+        console.error('获取统计失败:', error.message);
+        res.status(500).json({ error: '获取统计失败' });
+    }
 });
 
 // 访问统计：读取今日和总访问数
@@ -519,6 +610,9 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`   - /api/guestbook/stats - 留言统计`);
     console.log(`   - /api/guestbook/:id - 删除留言`);
     console.log(`   - /api/lobster-posts - 龙虾心事列表`);
+    console.log(`   - /api/lobster-posts/generate - 生成龙虾心事（POST，AI集成）`);
+    console.log(`   - /api/lobster-posts/stats - 龙虾心事统计`);
+    console.log(`   - /api/weather - 获取天气信息`);
     console.log(`   - /api/visits - 获取访问统计`);
     console.log(`   - /api/visits/track - 记录访问`);
     console.log(`\n💾 数据库: SQLite (guestbook.db)`);
